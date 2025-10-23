@@ -1,10 +1,12 @@
-#!/Users/Max/Documents/drexel/schedule_gen/venv/bin/python
+#!/usr/bin/env python3
 from pathlib import Path
 from sys import argv, exit
 
 from schedule_maker import ScheduleMaker
 
 VALID_SEASONS = ["fall", "winter", "spring", "summer"]
+# Obviously, this is where I personally keep my school-related files
+# I can't be bothered to hide this on GitHub, it's not that personal
 SCHOOL_DIRECTORY = Path("/Users/Max/Documents/drexel")
 
 def usage():
