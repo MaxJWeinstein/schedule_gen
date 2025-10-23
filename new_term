@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+if [ ! "$#" = 2 ]; then
+    echo "usage: new_term SEASON YEAR_SUFFIX"
+    exit 1
+fi
+
+valid_seasons="fall winter spring summer"
+is_valid=1
+for season in $valid_seasons; do
+    if [ "$1" = "$season" ]; then
+        is_valid=0
+    fi
+done
+if [ ! is_valid ]; then
+    echo "SEASON must be one of: $valid_seasons"
+    exit 1
+fi
+case "$2" in
+    [0-9][0-9]) ;;
+    *) echo "YEAR must be 2 digits"; exit 1;;
+esac
+
+directory="$1_$2"
+mkdir -p $directory
+schedule_file="$directory/schedule.json"
+
+if [ ! -f "$schedule_file" ]; then
+    echo "Creating JSON of schedule"
+    echo "{" > "$schedule_file"
+    first=0
+    while [ 0 ]; do
+        echo "Enter class code (or 'done' to finish)"
+        read class_code
+        if [ "$class_code" = "done" ]; then
+            break
+        fi
+        echo "What is the full name of this class?"
+        read class_name
+        echo "Where does this class meet?"
+        read class_location
+        echo "What days does this class meet? (Use space-separated, single, upper-case letters)"
+        read class_days
+        echo "What time does this class start? (Use 24-hour format)"
+        read class_start
+        echo "What time does this class end? (Use 24-hour format)"
+        read class_end
+        class_times="{"
+        first_time=0
+        for day in $class_days; do
+            if [ $first_time ]; then
+                class_times+=" "
+                first_time=""
+            else
+                class_times+=", "
+            fi
+            class_times+="\"$day\": [\"$class_start\",\"$class_end\"]"
+        done
+        class_times+=" }"
+        if [ $first ]; then
+            first=""
+        else
+            echo "," >> "$schedule_file"
+        fi
+        cat >>"$schedule_file" <<BLOCK
+    "$class_code": {
+        "name": "$class_name",
+        "location": "$class_location",
+        "times": $class_times
+    }
+BLOCK
+    done
+    echo "}" >> "$schedule_file" 
+fi
+
+schedule_gen/main.py $1 $2
+if [ -L current_term ]; then
+    unlink current_term
+fi
+ln -s $directory current_term
