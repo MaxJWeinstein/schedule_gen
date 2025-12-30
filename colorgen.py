@@ -3,12 +3,11 @@ import random
 BASE_COLORS = [
     "red",
     "lime",
-    "blue",
+    "aqua",
     "fuchsia",
     "coral",
     "green"
     "#FF6F00", #orange
-    "#00FFEC", #cyan
     "gold",
     "EF02FF", #pink
     "7417FF", #purple
