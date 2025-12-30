@@ -92,9 +92,13 @@ class Course:
         self.name: str = info["name"]
         self.location: str = info["location"]
         self.times = DailyTimes(info["times"])
+        self.color: str|None = None
 
     def meets_on_this_day(self, day: str) -> bool:
         return self.times.day_has_scheduled_block(day)
 
     def meeting_times_on_day(self, day: str) -> tuple[Time, Time]:
         return self.times.times_on_day(day)
+
+    def set_color(self, color: str):
+        self.color = color

@@ -6,6 +6,7 @@ import shutil
 import htpy
 
 from schedule import Course, DailyTimes, Time
+from colorgen import ColorGen
 
 
 class ScheduleMaker:
@@ -18,6 +19,10 @@ class ScheduleMaker:
         with open(source_file) as f:
             info = json.load(f)
             self.courses = [Course(code, course_info) for code,course_info in info.items()]
+
+        cg = ColorGen()
+        for course in self.courses:
+            course.set_color(cg.next())
 
         self.minutes_per_row = minutes_per_row
         self.times = self.determine_time_intervals(Time(minutes_per_row//60, minutes_per_row%60))
@@ -104,7 +109,7 @@ class MeetingTime:
         return ceil(duration/minutes_per_row)
 
     def style_body(self, start_of_day: Time, minutes_per_row:int=30) -> str:
-        return f"{{\n\tgrid-column: {self.grid_column};\n\tgrid-row: {self.grid_row(start_of_day,minutes_per_row)}/span {self.num_rows(minutes_per_row)};\n}}"
+        return f"{{\n\tgrid-column: {self.grid_column};\n\tgrid-row: {self.grid_row(start_of_day,minutes_per_row)}/span {self.num_rows(minutes_per_row)};\n\tbackground-color: {self.course.color};\n}}"
 
     def html_body(self) -> htpy.Fragment:
         return htpy.fragment[
