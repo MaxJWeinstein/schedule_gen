@@ -73,7 +73,7 @@ BLOCK
     echo "}" >> "$schedule_file" 
 fi
 
-./main.py $1 $2
+schedule_gen/main.py $1 $2
 if [ -L current_term ]; then
     unlink current_term
 fi
